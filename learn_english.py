@@ -14,7 +14,7 @@ def read_file():
 
 
 def write_file(file_name):
-    input_file = open(file_name, 'a', encoding='utf-8-sig')
+    input_file = open(file_name, 'w+', encoding='utf-8-sig')
     return input_file
 
 
@@ -47,6 +47,8 @@ def answer(learn_now):
                     if input() == '':
                         print('Ответ: {}'.format(key))
                         word = key
+                        input_file = open('not_learning.txt', 'a', encoding='utf-8-sig')
+                        input_file.write('{}-{}\n'.format(key, val))
                     else:
                         print('Переведите: {}'.format(val))
     return true
@@ -54,12 +56,15 @@ def answer(learn_now):
 
 def show_words(words):
     learn_now = dict()
+    input_file = open('not_learning.txt', 'w', encoding='utf-8-sig')
     for i, (key, val) in enumerate(sorted(words.items(), key=lambda x: random.random())):
-        if i == 10:
-            break
-        print(key + ': ' + val)
-        learn_now[key] = val
-        words.pop(key)
+        if i >= 10:
+            input_file.write('{}-{}\n'.format(key, val))
+        else:
+            print(key + ': ' + val)
+            learn_now[key] = val
+            words.pop(key)
+    input_file.close()
     return answer(learn_now)
 
 

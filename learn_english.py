@@ -1,24 +1,28 @@
+import fileinput
 import random
 import os
+import shutil
 
 
 def cls():
     os.system('clear')
 
 
-def read_file(file_name):
-    input_file = open(file_name, 'r', encoding='utf-8-sig')
+def read_file():
+    input_file = open('not_learning.txt', 'r+', encoding='utf-8-sig')
     return input_file.readlines()
 
 
 def write_file(file_name):
-    input_file = open(file_name, 'w', encoding='utf-8-sig')
+    input_file = open(file_name, 'a', encoding='utf-8-sig')
     return input_file
 
 
 def answer(learn_now):
     print('Готовы проверить свои знания?\nЕсли готовы, нажмите Enter')
     true = 0
+    n = read_file()
+    learning = write_file('learning.txt')
     if input() == '':
         cls()
         for key, val in sorted(learn_now.items(), key=lambda x: random.random()):
@@ -31,18 +35,20 @@ def answer(learn_now):
                 if word == key:
                     true += 1
                     print('ВЕРНО!)')
-                    learning = write_file('learning.txt')
                     learning.write('{}-{}\n'.format(key, val))
+                    for row in n:
+                        if row == '{}-{}\n'.format(word, val):
+                            row.replace(row, '')
                 else:
                     count += 1
                     print('Не верно. Попробуйте еще раз!')
                 if count >= 5:
                     print('Показать ответ? Если да, нажмите Enter.')
                     if input() == '':
-                        not_learning = write_file('not_learning.txt')
-                        not_learning.write('{}-{}\n'.format(key, val))
                         print('Ответ: {}'.format(key))
                         word = key
+                    else:
+                        print('Переведите: {}'.format(val))
     return true
 
 
@@ -62,12 +68,12 @@ def main():
         print('Если Вы хотите продолжить обучение нажмите +\nЕсли Вы хотите начать заново нажмите -')
         a = str(input())
         if a == '-':
-            file_name = 'english.txt'
+            shutil.copyfile('base_english.txt', 'not_learning.txt')
         elif a == '+':
-            file_name = 'not_learning.txt'
+            pass
         else:
             break
-        en = read_file(file_name)
+        en = read_file()
         en_word = {}
 
         while len(en) != 2:
